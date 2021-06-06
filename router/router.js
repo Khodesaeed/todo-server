@@ -4,6 +4,7 @@ const indexControllers = require('../controllers/indexController');
 const userControllers = require('../controllers/userController');
 const folderController = require('../controllers/folderController');
 const taskController = require('../controllers/taskController');
+const authController = require('../controllers/auth');
 
 router.get('/api', indexControllers.indexHandler)
 
@@ -25,5 +26,8 @@ router.get('/api/task/:uuid', taskController.getTask);
 router.post('/api/task/', taskController.insertTask);
 router.put('/api/task/:uuid', taskController.updateTask);
 router.delete('/api/task/:uuid', taskController.deleteTask);
+
+router.post('/api/auth/signup', authController.signup);
+router.post('/api/auth/login', authController.login)
 
 module.exports = router;
