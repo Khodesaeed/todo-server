@@ -11,6 +11,7 @@ app.use('/', router);
 
 app.listen(port, async() => {
     console.log(`Server running on port ${port}`);
+    // await sequelize.sync({ force: true });
     await sequelize.authenticate();
     console.log('Database connected');
 });

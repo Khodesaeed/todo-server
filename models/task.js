@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate({ Folder }) {
             // define association here
-            this.belongsTo(Folder, { foreignKey: 'folder_ir', as: 'task_folder' });
+            this.belongsTo(Folder, { foreignKey: 'folder_id', as: 'task_folder' });
         }
         toJSON() {
             return {...this.get(), id: undefined, folder_id: undefined }
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        desciption: {
+        description: {
             type: DataTypes.STRING,
             allowNull: true
         },

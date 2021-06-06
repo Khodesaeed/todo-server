@@ -46,12 +46,12 @@ exports.deleteFolder = async function(req, res) {
 
 exports.updateFolders = async function(req, res) {
     try {
-        const { name } = req.body
         const folderUuid = req.params.uuid;
-        const folder = await Folder.findOne({ where: { uuid: folderUuid } });
-        folder.name = name;
-
-        await folder.save(folder);
+        const folder = await Folder.update(req.body, {
+            where: {
+                uuid: folderUuid
+            }
+        });
         return res.status(200).json(folder);
 
     } catch (err) {
