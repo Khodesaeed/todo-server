@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
             this.hasMany(Folder, { foreignKey: 'user_id', as: 'user_folder' });
         }
         toJSON() {
-            return {...this.get(), id: undefined }
+            return {...this.get(), id: undefined, password: undefined }
         };
     };
     User.init({
@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         password: {
             type: DataTypes.STRING(50),
+            allowNull: false
+        },
+        role_name: {
+            type: DataTypes.STRING(10),
             allowNull: false
         }
     }, {
