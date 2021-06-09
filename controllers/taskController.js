@@ -1,6 +1,6 @@
 const { Task, Folder } = require('../models');
 
-exports.insertTask = async function(req, res) {
+async function createTask(req, res) {
     try {
         const {
             folderUuid,
@@ -24,7 +24,7 @@ exports.insertTask = async function(req, res) {
     };
 };
 
-exports.getTask = async function(req, res) {
+async function indexTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
         const task = await Task.findOne({ where: { uuid: taskUuid }, include: 'task_folder' });
@@ -35,7 +35,7 @@ exports.getTask = async function(req, res) {
     };
 };
 
-exports.getTasks = async function(req, res) {
+async function showTasks(req, res) {
     try {
         const task = await Task.findAll({ include: 'task_folder' });
         return res.status(200).json(task);
@@ -45,7 +45,7 @@ exports.getTasks = async function(req, res) {
     };
 };
 
-exports.updateTask = async function(req, res) {
+async function updateTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
         const task = await Task.update(req.body, {
@@ -60,7 +60,7 @@ exports.updateTask = async function(req, res) {
     };
 };
 
-exports.deleteTask = async function(req, res) {
+async function deleteTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
         await Task.destroy({ where: { uuid: taskUuid } });
@@ -70,3 +70,11 @@ exports.deleteTask = async function(req, res) {
         return res.status(500).json(err)
     };
 };
+
+module.exports = {
+    createTask,
+    indexTask,
+    showTasks,
+    updateTask,
+    deleteTask
+}

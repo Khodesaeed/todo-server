@@ -2,38 +2,46 @@ require('dotenv').config();
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const accessToken = process.env.TOKEN_SECRET;
+const tokenSecret = process.env.TOKEN_SECRET;
 
-const genToken = function(user) {
-    return jwt.sign({ data: user }, accessToken, { expiresIn: '15m' });
+function genToken(userData) {
+    const { username, role_name } = userData;
+    return jwt.sign({ username, role_name }, tokenSecret, { expiresIn: '15m' });
+};
+
+function hasToken(req, res, next) {
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) throw new Error('Please login...');
+    next();
+
+};
+
+function authorize() {
+
 }
 
-const authenticate = async function(user) {
+async function authenticate(user) {
     try {
         const { username, password } = user;
         const findUser = await User.findOne({ where: { username } });
         if (findUser == null) throw new Error('user not found');
-        try {
-            if (await bcrypt.compare(password, findUser.password)) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (inerr) {
-            throw new Error(inerr)
-        }
+        if (!await bcrypt.compare(password, findUser.password)) throw new Error(('Invalid password'));
+        return {
+            role_name: findUser.role_name,
+            username: findUser.username
+        };
     } catch (err) {
         return err
     }
 };
 
-exports.signup = async function(req, res) {
+async function signup(req, res) {
     try {
-        const { username, password } = req.body;
+        const { username, password, role_name } = req.body;
         const saltRounds = await bcrypt.genSalt();
         const hash = await bcrypt.hash(password, saltRounds);
         try {
-            const user = await User.create({ username, password: hash });
+            const user = await User.create({ username, password: hash, role_name });
             res.send(user)
         } catch (err) {
             console.log(err);
@@ -44,15 +52,29 @@ exports.signup = async function(req, res) {
     }
 };
 
-exports.login = async function(req, res) {
+async function login(req, res) {
     try {
-        const { username } = req.body;
-        const auth = await authenticate(req.body);
-        if (!auth) throw new Error('Password invalid');
+        const userData = await authenticate(req.body);
         //TODO create role model and check the token in each API endpoint
-        const token = genToken(username);
+        const token = genToken(userData);
         res.status(200).json({ token })
     } catch (error) {
         res.status(500).json(error);
     };
+};
+
+async function makeAdmin(req, res) {
+    try {
+        const userUuid = req.params.uuid
+        const user = await User.update({ where: { uuid: userUuid } });
+        res.send(user);
+    } catch (err) {
+        res.status(500).json(err);
+    };
+};
+
+module.exports = {
+    login,
+    signup,
+    makeAdmin
 };
