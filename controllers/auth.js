@@ -71,7 +71,6 @@ async function signup(req, res) {
 async function login(req, res) {
     try {
         const userData = await authenticate(req.body);
-        //TODO create role model and check the token in each API endpoint
         const token = genToken(userData);
         res.status(200).json({
             token

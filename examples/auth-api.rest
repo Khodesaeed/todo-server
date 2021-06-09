@@ -11,8 +11,8 @@ POST http://localhost:3000/api/auth/signup
 content-type: application/json
 
 {
-    "username": "kazemsad2",
-    "password": "kazem is very sad",
+    "username": "kazemsad",
+    "password": "kazem is sad",
     "role_name": "user"
 }
 
@@ -21,3 +21,6 @@ GET http://localhost:3000/api/user
 
 ###
 PUT http://localhost:3000/api/auth/make_admin/752110f4-bdbd-4f65-9b22-f3be4c6be779
+
+### 
+GET http://localhost:3000/api/user/
