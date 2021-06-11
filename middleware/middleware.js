@@ -7,21 +7,29 @@ async function authorize(req, res, next) {
     if (!token) return res.status(401).send('Invalid token.');
     try {
         const userData = await jwt.verify(token, tokenSecret);
-        console.log(userData);
+        req.userData = userData;
         return next();
     } catch (err) {
         return res.status(403).send('Invalid token');
     }
-}
+};
 
-function hasRole(role){
-    return (req,res,next) => {
+function hasRole(role) {
+    return (req, res, next) => {
         if (req.user.role === role) {
             next();
         }
     }
-}
+};
+
+function isAdmin(req, res, next) {
+    const { role_name, username } = req.userData;
+    if (role_name !== 'admin') return res.status(403).send('Permission denied');
+    return next();
+};
+
 
 module.exports = {
-    authorize
+    authorize,
+    isAdmin
 };

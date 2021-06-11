@@ -2,9 +2,10 @@ const { Folder, User } = require('../models');
 
 async function createFolder(req, res) {
     try {
-        const { user_uuid, name } = req.body;
-        const user = await User.findOne({ where: { uuid: user_uuid } });
-        const folder = await Folder.create({ name, user_id: user.id });
+        const { username, role_name } = req.userData;
+        const name = req.body.name;
+        const user = await User.findOne({ where: { username } });
+        const folder = await Folder.create({ name, user_id: user.id }, { include: 'folder_user' });
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);
@@ -25,7 +26,8 @@ async function indexFolders(req, res) {
 
 async function showFolder(req, res) {
     try {
-        const folder = await Folder.findAll({ include: 'folder_user' });
+        const { username, role_name } = req.userData;
+        const folder = await Folder.findAll({ include: 'folder_user' }, { where: { username } });
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);

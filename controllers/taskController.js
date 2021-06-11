@@ -34,10 +34,11 @@ async function indexTask(req, res) {
         return res.status(500).json(err)
     };
 };
-
+// TODO fix the query
 async function showTasks(req, res) {
     try {
-        const task = await Task.findAll({ include: 'task_folder' });
+        const { username, role_name } = req.userData;
+        const task = await Task.findAll({ include: 'task_folder' }, { where: {} });
         return res.status(200).json(task);
     } catch (err) {
         console.log(err);

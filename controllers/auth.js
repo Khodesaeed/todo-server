@@ -37,10 +37,11 @@ async function authenticate(user) {
             username: findUser.username
         };
     } catch (err) {
-        return err
+        // TODO fix error message and status code
+        throw err
     }
 };
-
+// TODO check for existed user.
 async function signup(req, res) {
     try {
         const {

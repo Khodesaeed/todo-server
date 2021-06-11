@@ -18,9 +18,10 @@ content-type: application/json
 
 ### 
 GET http://localhost:3000/api/user
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthemVtc2FkIiwicm9sZV9uYW1lIjoidXNlciIsImlhdCI6MTYyMzI1MzYwNywiZXhwIjoxNjIzMjU0NTA3fQ.h5P6VNIWovckR1ZrmjUiOHuPbE1Y3vEpBSYHkrr_bfQ
 ###
 PUT http://localhost:3000/api/auth/make_admin/752110f4-bdbd-4f65-9b22-f3be4c6be779
 
-### 
-GET http://localhost:3000/api/user/
+###
+GET http://localhost:3000/api/folder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthemVtc2FkIiwicm9sZV9uYW1lIjoidXNlciIsImlhdCI6MTYyMzQyMTI4OSwiZXhwIjoxNjIzNDIyMTg5fQ.wGxprVDTv_Yf-SS6N6rydZRVEtWc3EoHwft6cgqt0e8
