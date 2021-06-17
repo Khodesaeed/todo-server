@@ -8,11 +8,13 @@ const tokenSecret = process.env.TOKEN_SECRET;
 function genToken(userData) {
     const {
         username,
-        role_name
+        role_name,
+        userUuid
     } = userData;
     return jwt.sign({
         username,
-        role_name
+        role_name,
+        userUuid
     }, tokenSecret, {
         expiresIn: '15m'
     });
@@ -34,7 +36,8 @@ async function authenticate(user) {
         if (!await bcrypt.compare(password, findUser.password)) throw new Error(('Invalid password'));
         return {
             role_name: findUser.role_name,
-            username: findUser.username
+            username: findUser.username,
+            userUuid: findUser.uuid
         };
     } catch (err) {
         // TODO fix error message and status code
@@ -46,8 +49,7 @@ async function signup(req, res) {
     try {
         const {
             username,
-            password,
-            role_name
+            password
         } = req.body;
         const saltRounds = await bcrypt.genSalt();
         const hash = await bcrypt.hash(password, saltRounds);
@@ -55,7 +57,7 @@ async function signup(req, res) {
             const user = await User.create({
                 username,
                 password: hash,
-                role_name
+                role_name: 'user'
             });
             res.send(user)
         } catch (err) {

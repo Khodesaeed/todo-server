@@ -11,16 +11,17 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate({ Folder }) {
             // define association here
-            this.belongsTo(Folder, { foreignKey: 'folder_id', as: 'task_folder' });
+            this.belongsTo(Folder, { foreignKey: 'folderId', as: 'taskFolder' });
         }
         toJSON() {
-            return {...this.get(), id: undefined, folder_id: undefined }
+            return {...this.get(), folder_id: undefined }
         };
     };
     Task.init({
         uuid: {
             type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
         },
         title: {
             type: DataTypes.STRING,
@@ -38,8 +39,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        folder_id: {
-            type: DataTypes.INTEGER,
+        folderUuid: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             allowNull: false
         }
     }, {

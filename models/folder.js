@@ -11,24 +11,25 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate({ User, Task }) {
             // define association here
-            this.belongsTo(User, { foreignKey: 'user_id', as: 'folder_user' });
-            this.hasMany(Task, { foreignKey: 'folder_id', as: 'folder_task' });
+            this.belongsTo(User, { foreignKey: 'userUuid', as: 'folderUser' });
+            this.hasMany(Task, { foreignKey: 'folderId', as: 'folderTask' });
         }
         toJSON() {
-            return {...this.get(), id: undefined, user_id: undefined }
+            return {...this.get(), user_id: undefined }
         };
     };
     Folder.init({
         uuid: {
             type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
         },
         name: {
             type: DataTypes.STRING(50),
             allowNull: false
         },
-        user_id: {
-            type: DataTypes.INTEGER,
+        userUuid: {
+            type: DataTypes.UUID,
             allowNull: false
         }
     }, {

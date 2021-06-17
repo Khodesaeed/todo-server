@@ -9,13 +9,12 @@ async function createTask(req, res) {
             start_at,
             finish_at
         } = req.body;
-        const folder = await Folder.findOne({ where: { uuid: folderUuid } });
         const task = await Task.create({
             title,
             description,
             start_at,
             finish_at,
-            folder_id: folder.id
+            folderUuid
         });
         return res.status(200).json(task)
     } catch (err) {
@@ -27,7 +26,7 @@ async function createTask(req, res) {
 async function indexTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
-        const task = await Task.findOne({ where: { uuid: taskUuid }, include: 'task_folder' });
+        const task = await Task.findOne({ where: { uuid: taskUuid }, include: 'taskFolder' });
         return res.status(200).json(task);
     } catch (err) {
         console.log(err);
@@ -38,7 +37,7 @@ async function indexTask(req, res) {
 async function showTasks(req, res) {
     try {
         const { username, role_name } = req.userData;
-        const task = await Task.findAll({ include: 'task_folder' }, { where: {} });
+        const task = await Task.findAll({ include: 'taskFolder' }, { where: {} });
         return res.status(200).json(task);
     } catch (err) {
         console.log(err);
