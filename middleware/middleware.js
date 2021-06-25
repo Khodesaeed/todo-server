@@ -23,8 +23,8 @@ function hasRole(role) {
 };
 
 function isAdmin(req, res, next) {
-    const { role_name, username } = req.userData;
-    if (role_name !== 'admin') return res.status(403).send('Permission denied');
+    const { roleName, username } = req.userData;
+    if (roleName !== 'admin') return res.status(403).send('Permission denied');
     return next();
 };
 
