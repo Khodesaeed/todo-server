@@ -1,4 +1,4 @@
-const { Task, Folder } = require('../models');
+const { Task, Folder, User } = require('../models');
 
 async function createTask(req, res) {
     try {
@@ -33,12 +33,21 @@ async function indexTask(req, res) {
         return res.status(500).json(err)
     };
 };
-// TODO fix the query
+
 async function showTasks(req, res) {
     try {
-        const { username, role_name } = req.userData;
-        const task = await Task.findAll({ include: 'taskFolder' }, { where: {} });
-        return res.status(200).json(task);
+        const { username, roleName, userUuid } = req.userData;
+        const tasks = await Task.findAll({
+            include: [{
+                model: Folder,
+                as: 'taskFolder',
+                attributes: ['name', 'userUuid'],
+                where: {
+                    userUuid
+                }
+            }]
+        });
+        return res.status(200).json(tasks);
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
