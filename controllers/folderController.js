@@ -2,32 +2,52 @@ const { Folder, User } = require('../models');
 
 async function createFolder(req, res) {
     try {
-        const { username, role_name, userUuid } = req.userData;
+        const { userUuid } = req.userData;
         const name = req.body.name;
-        const user = await User.findOne({ where: { username } });
-        const folder = await Folder.create({ name, userUuid }, { include: 'folderUser' });
+        const folder = await Folder.create({ name, userUuid });
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
     };
 };
-// TODO check the uuid of the bearer token with the folder token
+
 async function indexFolders(req, res) {
     try {
+        const { userUuid } = req.userData;
         const folderUuid = req.params.uuid;
-        const folder = await Folder.findOne({ where: { uuid: folderUuid }, include: 'folderUser' });
+        // const folder = await Folder.findOne({ where: { uuid: folderUuid }, include: 'folderUser' });
+        const folder = await Folder.findOne({
+            include: [{
+                model: User,
+                as: 'folderUser',
+                attributes: ['username', 'uuid'],
+                where: { uuid: userUuid }
+            }],
+            where: {
+                uuid: folderUuid
+            }
+        })
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
     };
 };
-// TODO check the folders userUuid column with the uuid in the bearer token
+
 async function showFolder(req, res) {
     try {
-        const { username, role_name, userUuid } = req.userData;
-        const folder = await Folder.findAll({ include: 'folderUser' }, { where: { username } });
+        const { userUuid } = req.userData;
+        const folder = await Folder.findAll({
+            include: [{
+                model: User,
+                as: 'folderUser',
+                attributes: ['username', 'uuid'],
+                where: {
+                    uuid: userUuid
+                }
+            }]
+        });
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);

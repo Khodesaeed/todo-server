@@ -53,7 +53,7 @@ async function showTasks(req, res) {
         return res.status(500).json(err)
     };
 };
-
+// TODO Check the bearer uuid
 async function updateTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
@@ -68,7 +68,7 @@ async function updateTask(req, res) {
         return res.status(500).json(err)
     };
 };
-
+// TODO Check the bearer uuid
 async function deleteTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
