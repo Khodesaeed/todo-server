@@ -1,7 +1,6 @@
 const { User } = require('../models');
 
-
-exports.insertUser = async function(req, res) {
+async function createUser(req, res) {
     try {
         const user = await User.create(req.body);
         return res.send(user);
@@ -11,7 +10,7 @@ exports.insertUser = async function(req, res) {
     };
 };
 
-exports.getUser = async function(req, res) {
+async function indexUser(req, res) {
     try {
         const userId = req.params.uuid;
         const user = await User.findOne({ where: { uuid: userId } });
@@ -22,7 +21,7 @@ exports.getUser = async function(req, res) {
     };
 };
 
-exports.getUsers = async function(req, res) {
+async function showUsers(req, res) {
     try {
         const users = await User.findAll();
         return res.status(200).json(users)
@@ -32,7 +31,7 @@ exports.getUsers = async function(req, res) {
     };
 };
 
-exports.updateUser = async function(req, res) {
+async function updateUser(req, res) {
     try {
         const userUuid = req.params.uuid;
 
@@ -49,13 +48,21 @@ exports.updateUser = async function(req, res) {
     };
 };
 
-exports.deleteUser = async function(req, res) {
+async function deleteUser(req, res) {
     try {
         const userId = req.params.uuid;
         await User.destroy({ where: { uuid: userId } });
         return res.status(200).json({ message: 'user deleted' })
     } catch (err) {
         console.log(err);
-        return res.status(500).json(err)
+        return res.status(500).json(err);
     };
+}
+
+module.exports = {
+    createUser,
+    indexUser,
+    showUsers,
+    updateUser,
+    deleteUser
 }

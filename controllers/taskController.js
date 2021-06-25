@@ -1,6 +1,6 @@
-const { Task, Folder } = require('../models');
+const { Task, Folder, User } = require('../models');
 
-exports.insertTask = async function(req, res) {
+async function createTask(req, res) {
     try {
         const {
             folderUuid,
@@ -9,13 +9,12 @@ exports.insertTask = async function(req, res) {
             start_at,
             finish_at
         } = req.body;
-        const folder = await Folder.findOne({ where: { uuid: folderUuid } });
         const task = await Task.create({
             title,
             description,
             start_at,
             finish_at,
-            folder_id: folder.id
+            folderUuid
         });
         return res.status(200).json(task)
     } catch (err) {
@@ -24,10 +23,10 @@ exports.insertTask = async function(req, res) {
     };
 };
 
-exports.getTask = async function(req, res) {
+async function indexTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
-        const task = await Task.findOne({ where: { uuid: taskUuid }, include: 'task_folder' });
+        const task = await Task.findOne({ where: { uuid: taskUuid }, include: 'taskFolder' });
         return res.status(200).json(task);
     } catch (err) {
         console.log(err);
@@ -35,17 +34,27 @@ exports.getTask = async function(req, res) {
     };
 };
 
-exports.getTasks = async function(req, res) {
+async function showTasks(req, res) {
     try {
-        const task = await Task.findAll({ include: 'task_folder' });
-        return res.status(200).json(task);
+        const { username, roleName, userUuid } = req.userData;
+        const tasks = await Task.findAll({
+            include: [{
+                model: Folder,
+                as: 'taskFolder',
+                attributes: ['name', 'userUuid'],
+                where: {
+                    userUuid
+                }
+            }]
+        });
+        return res.status(200).json(tasks);
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
     };
 };
-
-exports.updateTask = async function(req, res) {
+// TODO Check the bearer uuid
+async function updateTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
         const task = await Task.update(req.body, {
@@ -59,8 +68,8 @@ exports.updateTask = async function(req, res) {
         return res.status(500).json(err)
     };
 };
-
-exports.deleteTask = async function(req, res) {
+// TODO Check the bearer uuid
+async function deleteTask(req, res) {
     try {
         const taskUuid = req.params.uuid;
         await Task.destroy({ where: { uuid: taskUuid } });
@@ -70,3 +79,11 @@ exports.deleteTask = async function(req, res) {
         return res.status(500).json(err)
     };
 };
+
+module.exports = {
+    createTask,
+    indexTask,
+    showTasks,
+    updateTask,
+    deleteTask
+}

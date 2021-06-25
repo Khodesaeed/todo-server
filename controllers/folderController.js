@@ -1,11 +1,10 @@
 const { Folder, User } = require('../models');
 
-
-exports.insertFolder = async function(req, res) {
+async function createFolder(req, res) {
     try {
-        const { user_uuid, name } = req.body;
-        const user = await User.findOne({ where: { uuid: user_uuid } });
-        const folder = await Folder.create({ name, user_id: user.id });
+        const { userUuid } = req.userData;
+        const name = req.body.name;
+        const folder = await Folder.create({ name, userUuid });
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);
@@ -13,10 +12,22 @@ exports.insertFolder = async function(req, res) {
     };
 };
 
-exports.getFolders = async function(req, res) {
+async function indexFolders(req, res) {
     try {
+        const { userUuid } = req.userData;
         const folderUuid = req.params.uuid;
-        const folder = await Folder.findOne({ where: { uuid: folderUuid }, include: 'folder_user' });
+        // const folder = await Folder.findOne({ where: { uuid: folderUuid }, include: 'folderUser' });
+        const folder = await Folder.findOne({
+            include: [{
+                model: User,
+                as: 'folderUser',
+                attributes: ['username', 'uuid'],
+                where: { uuid: userUuid }
+            }],
+            where: {
+                uuid: folderUuid
+            }
+        })
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);
@@ -24,16 +35,27 @@ exports.getFolders = async function(req, res) {
     };
 };
 
-exports.getFolder = async function(req, res) {
+async function showFolder(req, res) {
     try {
-        const folder = await Folder.findAll({ include: 'folder_user' });
+        const { userUuid } = req.userData;
+        const folder = await Folder.findAll({
+            include: [{
+                model: User,
+                as: 'folderUser',
+                attributes: ['username', 'uuid'],
+                where: {
+                    uuid: userUuid
+                }
+            }]
+        });
         return res.status(200).json(folder);
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
     };
 };
-exports.deleteFolder = async function(req, res) {
+// TODO Check the bearer uuid with the folder userUuid column.
+async function deleteFolder(req, res) {
     try {
         const folderUuid = req.params.uuid;
         await Folder.destroy({ where: { uuid: folderUuid } });
@@ -43,8 +65,8 @@ exports.deleteFolder = async function(req, res) {
         return res.status(500).json(err)
     };
 };
-
-exports.updateFolders = async function(req, res) {
+// TODO Check the bearer uuid with the folder userUuid column.
+async function updateFolders(req, res) {
     try {
         const folderUuid = req.params.uuid;
         const folder = await Folder.update(req.body, {
@@ -59,3 +81,11 @@ exports.updateFolders = async function(req, res) {
         return res.status(500).json(err)
     };
 };
+
+module.exports = {
+    createFolder,
+    indexFolders,
+    showFolder,
+    deleteFolder,
+    updateFolders
+}

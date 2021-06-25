@@ -11,16 +11,17 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate({ Folder }) {
             // define association here
-            this.hasMany(Folder, { foreignKey: 'user_id', as: 'user_folder' });
+            this.hasMany(Folder, { foreignKey: 'userUuid', as: 'userFolder' });
         }
         toJSON() {
-            return {...this.get(), id: undefined }
+            return {...this.get(), password: undefined }
         };
     };
     User.init({
         uuid: {
             type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
         },
         username: {
             type: DataTypes.STRING(50),
@@ -28,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         password: {
             type: DataTypes.STRING(50),
+            allowNull: false
+        },
+        roleName: {
+            type: DataTypes.STRING(10),
             allowNull: false
         }
     }, {
