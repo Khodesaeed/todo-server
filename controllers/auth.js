@@ -8,15 +8,15 @@ const tokenSecret = process.env.TOKEN_SECRET;
 function genToken(userData) {
     const {
         username,
-        role_name,
+        roleName,
         userUuid
     } = userData;
     return jwt.sign({
         username,
-        role_name,
+        roleName,
         userUuid
     }, tokenSecret, {
-        expiresIn: '15m'
+        expiresIn: '1h'
     });
 };
 
@@ -35,39 +35,39 @@ async function authenticate(user) {
         if (findUser == null) throw new Error('user not found');
         if (!await bcrypt.compare(password, findUser.password)) throw new Error(('Invalid password'));
         return {
-            role_name: findUser.role_name,
+            roleName: findUser.roleName,
             username: findUser.username,
             userUuid: findUser.uuid
         };
     } catch (err) {
-        // TODO fix error message and status code
         throw err
     }
 };
-// TODO check for existed user.
+
 async function signup(req, res) {
     try {
         const {
             username,
             password
         } = req.body;
+        const isUserExist = await User.findOne({ where: { username } });
+        if (isUserExist) throw new Error('username has taken!');
         const saltRounds = await bcrypt.genSalt();
         const hash = await bcrypt.hash(password, saltRounds);
         try {
             const user = await User.create({
                 username,
                 password: hash,
-                role_name: 'user'
+                roleName: 'user'
             });
             res.send(user)
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
         }
-    } catch (hasherr) {
-        res.status(500).json({
-            error_message: 'somthing went wrong in signup process!'
-        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error.message);
     }
 };
 
@@ -79,18 +79,15 @@ async function login(req, res) {
             token
         })
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).send(error.message);
     };
 };
 
 async function makeAdmin(req, res) {
     try {
-        const userUuid = req.params.uuid
-        const user = await User.update({
-            where: {
-                uuid: userUuid
-            }
-        });
+        const userUuid = req.params.uuid;
+        const user = await User.findOne({ where: { uuid: userUuid } });
+        user.roleName = 'admin';
         res.send(user);
     } catch (err) {
         res.status(500).json(err);
