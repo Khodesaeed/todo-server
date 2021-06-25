@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate({ Folder }) {
             // define association here
-            this.belongsTo(Folder, { foreignKey: 'folderId', as: 'taskFolder' });
+            this.belongsTo(Folder, { foreignKey: 'folderUuid', as: 'taskFolder' });
         }
         toJSON() {
             return {...this.get(), folder_id: undefined }

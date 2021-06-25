@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate({ User, Task }) {
             // define association here
             this.belongsTo(User, { foreignKey: 'userUuid', as: 'folderUser' });
-            this.hasMany(Task, { foreignKey: 'folderId', as: 'folderTask' });
+            this.hasMany(Task, { foreignKey: 'folderUuid', as: 'folderTask' });
         }
         toJSON() {
             return {...this.get(), user_id: undefined }

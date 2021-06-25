@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(50),
             allowNull: false
         },
-        role_name: {
+        roleName: {
             type: DataTypes.STRING(10),
             allowNull: false
         }
