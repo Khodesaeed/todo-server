@@ -11,13 +11,13 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/user', userRouter);
-app.use ('/api/auth', authRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/folder', folderRouter);
 app.use('/api/task', taskRouter);
 
 app.listen(port, async() => {
     console.log(`Server running on port ${port}`);
-    await sequelize.sync({ force: true });
-    // await sequelize.authenticate();
+    // await sequelize.sync({ force: true });
+    await sequelize.authenticate();
     console.log('Database connected');
 });
