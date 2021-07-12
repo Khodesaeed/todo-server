@@ -16,7 +16,6 @@ async function indexFolders(req, res) {
     try {
         const { userUuid } = req.userData;
         const folderUuid = req.params.uuid;
-        // const folder = await Folder.findOne({ where: { uuid: folderUuid }, include: 'folderUser' });
         const folder = await Folder.findOne({
             include: [{
                 model: User,
@@ -54,24 +53,32 @@ async function showFolder(req, res) {
         return res.status(500).json(err)
     };
 };
-// TODO Check the bearer uuid with the folder userUuid column.
+
 async function deleteFolder(req, res) {
     try {
+        const { userUuid } = req.userData;
         const folderUuid = req.params.uuid;
-        await Folder.destroy({ where: { uuid: folderUuid } });
+        await Folder.destroy({
+            where: {
+                uuid: folderUuid,
+                userUuid: userUuid
+            }
+        });
         return res.status(200).json({ "message": "user deleted" });
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
     };
 };
-// TODO Check the bearer uuid with the folder userUuid column.
+
 async function updateFolders(req, res) {
     try {
+        const { userUuid } = req.userData;
         const folderUuid = req.params.uuid;
         const folder = await Folder.update(req.body, {
             where: {
-                uuid: folderUuid
+                uuid: folderUuid,
+                userUuid
             }
         });
         return res.status(200).json(folder);
