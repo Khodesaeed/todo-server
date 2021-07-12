@@ -53,13 +53,15 @@ async function showTasks(req, res) {
         return res.status(500).json(err)
     };
 };
-// TODO Check the bearer uuid
+
 async function updateTask(req, res) {
     try {
+        const { userUuid } = req.userData;
         const taskUuid = req.params.uuid;
         const task = await Task.update(req.body, {
             where: {
-                uuid: taskUuid
+                uuid: taskUuid,
+                userUuid
             }
         });
         return res.status(200).json(task);
@@ -68,12 +70,18 @@ async function updateTask(req, res) {
         return res.status(500).json(err)
     };
 };
-// TODO Check the bearer uuid
+
 async function deleteTask(req, res) {
     try {
+        const { userUuid } = req.userData;
         const taskUuid = req.params.uuid;
-        await Task.destroy({ where: { uuid: taskUuid } });
-        return res.status(200).json({ "message": "user deleted" });
+        await Task.destroy({
+            where: {
+                uuid: taskUuid,
+                userUuid
+            }
+        });
+        return res.status(200).json({ "message": "Task deleted" });
     } catch (err) {
         console.log(err);
         return res.status(500).json(err)
