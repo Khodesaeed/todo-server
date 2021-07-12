@@ -76,7 +76,8 @@ async function login(req, res) {
         const userData = await authenticate(req.body);
         const token = genToken(userData);
         res.status(200).json({
-            token
+            token,
+            uuid: userData.userUuid
         })
     } catch (error) {
         res.status(500).send(error.message);
@@ -88,6 +89,7 @@ async function makeAdmin(req, res) {
         const userUuid = req.params.uuid;
         const user = await User.findOne({ where: { uuid: userUuid } });
         user.roleName = 'admin';
+        await user.save()
         res.send(user);
     } catch (err) {
         res.status(500).json(err);
